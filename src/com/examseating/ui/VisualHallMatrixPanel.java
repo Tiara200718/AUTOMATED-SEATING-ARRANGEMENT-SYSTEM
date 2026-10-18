@@ -7,6 +7,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 
@@ -24,10 +26,10 @@ public class VisualHallMatrixPanel extends JPanel {
     // Harmonious branch color palette
     private static final Map<String, Color> DEPT_COLORS = new HashMap<>();
     static {
-        DEPT_COLORS.put("CSE", new Color(37, 99, 235));   // Blue
-        DEPT_COLORS.put("ECE", new Color(22, 163, 74));   // Emerald Green
-        DEPT_COLORS.put("MECH", new Color(234, 88, 12));  // Orange
-        DEPT_COLORS.put("CIVIL", new Color(147, 51, 234));// Purple
+        DEPT_COLORS.put("CSE", new Color(37, 99, 235));   // Rich Royal Blue
+        DEPT_COLORS.put("ECE", new Color(16, 185, 129));  // Emerald Green
+        DEPT_COLORS.put("MECH", new Color(234, 88, 12));  // Sunset Orange
+        DEPT_COLORS.put("CIVIL", new Color(147, 51, 234));// Vibrant Purple
         DEPT_COLORS.put("IT", new Color(13, 148, 136));   // Teal
         DEPT_COLORS.put("DEFAULT", new Color(71, 85, 105));// Slate
     }
@@ -42,7 +44,7 @@ public class VisualHallMatrixPanel extends JPanel {
         topPanel.setBackground(new Color(248, 250, 252));
 
         headerLabel = new JLabel("Select an Exam Room to view visual seating grid", JLabel.LEFT);
-        headerLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        headerLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
         headerLabel.setForeground(new Color(15, 23, 42));
         topPanel.add(headerLabel, BorderLayout.WEST);
 
@@ -68,14 +70,18 @@ public class VisualHallMatrixPanel extends JPanel {
         legendPanel.removeAll();
         for (Map.Entry<String, Color> entry : DEPT_COLORS.entrySet()) {
             if (entry.getKey().equals("DEFAULT")) continue;
-            JPanel tag = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 2));
+            JPanel tag = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 2));
             tag.setBackground(new Color(248, 250, 252));
-            JLabel colorBox = new JLabel("   ");
+
+            JLabel colorBox = new JLabel("      ");
             colorBox.setOpaque(true);
             colorBox.setBackground(entry.getValue());
-            colorBox.setBorder(new LineBorder(Color.GRAY, 1));
+            colorBox.setBorder(new LineBorder(entry.getValue().darker(), 1, true));
+
             JLabel label = new JLabel(entry.getKey());
-            label.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            label.setFont(new Font("Segoe UI", Font.BOLD, 12));
+            label.setForeground(new Color(51, 65, 85));
+
             tag.add(colorBox);
             tag.add(label);
             legendPanel.add(tag);
@@ -100,7 +106,7 @@ public class VisualHallMatrixPanel extends JPanel {
                 r.getRoomCode(), r.getBuilding(), r.getTotalRows(), r.getTotalColumns(), occupiedCount, r.getTotalCapacity()));
 
         gridPanel.removeAll();
-        gridPanel.setLayout(new GridLayout(r.getTotalRows(), r.getTotalColumns(), 12, 12));
+        gridPanel.setLayout(new GridLayout(r.getTotalRows(), r.getTotalColumns(), 14, 14));
 
         for (int row = 1; row <= r.getTotalRows(); row++) {
             for (int col = 1; col <= r.getTotalColumns(); col++) {
@@ -121,11 +127,11 @@ public class VisualHallMatrixPanel extends JPanel {
         ));
 
         JLabel benchHeader = new JLabel("Bench R" + row + "-C" + col, JLabel.CENTER);
-        benchHeader.setFont(new Font("Segoe UI", Font.BOLD, 11));
-        benchHeader.setForeground(new Color(100, 116, 139));
+        benchHeader.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        benchHeader.setForeground(new Color(71, 85, 105));
         bench.add(benchHeader, BorderLayout.NORTH);
 
-        JPanel seatsRow = new JPanel(new GridLayout(1, seatsPerBench, 6, 0));
+        JPanel seatsRow = new JPanel(new GridLayout(1, seatsPerBench, 8, 0));
         seatsRow.setOpaque(false);
 
         for (int pos = 1; pos <= seatsPerBench; pos++) {
@@ -138,49 +144,65 @@ public class VisualHallMatrixPanel extends JPanel {
         return bench;
     }
 
-    private JButton createSeatBadge(SeatAllocation sa, int row, int col, int pos) {
-        JButton seatBtn = new JButton();
-        seatBtn.setFocusPainted(false);
-        seatBtn.setLayout(new BorderLayout());
+    private JComponent createSeatBadge(SeatAllocation sa, int row, int col, int pos) {
+        String dept = (sa != null && sa.getDepartment() != null) ? sa.getDepartment().toUpperCase() : "DEFAULT";
+        Color cardColor = (sa != null) ? DEPT_COLORS.getOrDefault(dept, DEPT_COLORS.get("DEFAULT")) : new Color(226, 232, 240);
+
+        JPanel seatCard = new JPanel(new BorderLayout(2, 2)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(cardColor);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+                if (sa == null) {
+                    g2.setColor(new Color(148, 163, 184));
+                    Stroke dashed = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{3}, 0);
+                    g2.setStroke(dashed);
+                    g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 10, 10);
+                }
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        seatCard.setOpaque(false);
+        seatCard.setBorder(new EmptyBorder(8, 6, 8, 6));
 
         if (sa != null) {
-            String dept = sa.getDepartment() != null ? sa.getDepartment().toUpperCase() : "DEFAULT";
-            Color bgColor = DEPT_COLORS.getOrDefault(dept, DEPT_COLORS.get("DEFAULT"));
-            seatBtn.setBackground(bgColor);
-            seatBtn.setForeground(Color.WHITE);
+            seatCard.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
             JLabel rollLbl = new JLabel(sa.getStudentRoll(), JLabel.CENTER);
             rollLbl.setFont(new Font("Segoe UI", Font.BOLD, 12));
             rollLbl.setForeground(Color.WHITE);
 
-            JLabel subLbl = new JLabel(dept + " (Pos " + (pos == 1 ? "L" : "R") + ")", JLabel.CENTER);
-            subLbl.setFont(new Font("Segoe UI", Font.PLAIN, 10));
+            JLabel subLbl = new JLabel(dept + " (" + (pos == 1 ? "Left" : "Right") + ")", JLabel.CENTER);
+            subLbl.setFont(new Font("Segoe UI", Font.BOLD, 10));
             subLbl.setForeground(new Color(241, 245, 249));
 
-            seatBtn.add(rollLbl, BorderLayout.CENTER);
-            seatBtn.add(subLbl, BorderLayout.SOUTH);
+            seatCard.add(rollLbl, BorderLayout.CENTER);
+            seatCard.add(subLbl, BorderLayout.SOUTH);
 
-            seatBtn.setToolTipText(String.format("<html><b>Student:</b> %s<br><b>Roll:</b> %s<br><b>Branch:</b> %s<br><b>Seat:</b> Row %d, Col %d (%s)</html>",
+            seatCard.setToolTipText(String.format("<html><b>Student:</b> %s<br><b>Roll:</b> %s<br><b>Branch:</b> %s<br><b>Seat:</b> Row %d, Col %d (%s)</html>",
                     sa.getStudentName(), sa.getStudentRoll(), sa.getDepartment(), row, col, pos == 1 ? "Left" : "Right"));
 
-            seatBtn.addActionListener(e -> {
-                JOptionPane.showMessageDialog(this,
-                        String.format("Roll Number: %s\nStudent Name: %s\nDepartment: %s\nHall: %s\nRow: %d, Column: %d\nBench Position: %s",
-                                sa.getStudentRoll(), sa.getStudentName(), sa.getDepartment(),
-                                sa.getRoomCode(), row, col, pos == 1 ? "Left" : "Right"),
-                        "Allocated Seat Details",
-                        JOptionPane.INFORMATION_MESSAGE);
+            seatCard.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    JOptionPane.showMessageDialog(VisualHallMatrixPanel.this,
+                            String.format("Roll Number: %s\nStudent Name: %s\nDepartment: %s\nHall: %s\nRow: %d, Column: %d\nBench Position: %s",
+                                    sa.getStudentRoll(), sa.getStudentName(), sa.getDepartment(),
+                                    sa.getRoomCode(), row, col, pos == 1 ? "Left" : "Right"),
+                            "Allocated Seat Details",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
             });
         } else {
-            seatBtn.setBackground(new Color(241, 245, 249));
-            seatBtn.setForeground(new Color(148, 163, 184));
             JLabel emptyLbl = new JLabel("Empty (" + (pos == 1 ? "L" : "R") + ")", JLabel.CENTER);
             emptyLbl.setFont(new Font("Segoe UI", Font.ITALIC, 11));
-            emptyLbl.setForeground(new Color(148, 163, 184));
-            seatBtn.add(emptyLbl, BorderLayout.CENTER);
-            seatBtn.setEnabled(false);
+            emptyLbl.setForeground(new Color(100, 116, 139));
+            seatCard.add(emptyLbl, BorderLayout.CENTER);
         }
 
-        return seatBtn;
+        return seatCard;
     }
 }

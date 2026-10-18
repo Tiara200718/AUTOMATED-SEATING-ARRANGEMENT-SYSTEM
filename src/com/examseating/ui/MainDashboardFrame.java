@@ -47,6 +47,7 @@ public class MainDashboardFrame extends JFrame {
 
     private JTextArea exportPreviewArea;
     private JTextArea logArea;
+    private JTabbedPane tabbedPane;
 
     private Exam currentExam;
 
@@ -100,7 +101,7 @@ public class MainDashboardFrame extends JFrame {
         add(headerPanel, BorderLayout.NORTH);
 
         // 2. Tabbed Navigation
-        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane = new JTabbedPane();
         tabbedPane.setFont(new Font("Segoe UI", Font.BOLD, 13));
 
         tabbedPane.addTab("  📊 Dashboard  ", createDashboardTab());
@@ -144,24 +145,18 @@ public class MainDashboardFrame extends JFrame {
 
         JButton runAllocBtn = new JButton("⚡ Run Smart Seating Allocation");
         runAllocBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        runAllocBtn.setBackground(new Color(37, 99, 235));
-        runAllocBtn.setForeground(Color.WHITE);
-        runAllocBtn.setFocusPainted(false);
+        styleButton(runAllocBtn, new Color(37, 99, 235), Color.WHITE);
         runAllocBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         runAllocBtn.addActionListener(e -> triggerSmartAllocation());
 
         JButton clearAllocBtn = new JButton("🧹 Reset Seating");
-        clearAllocBtn.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        clearAllocBtn.setBackground(new Color(239, 68, 68));
-        clearAllocBtn.setForeground(Color.WHITE);
-        clearAllocBtn.setFocusPainted(false);
+        clearAllocBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        styleButton(clearAllocBtn, new Color(239, 68, 68), Color.WHITE);
         clearAllocBtn.addActionListener(e -> resetSeating());
 
         JButton seedBtn = new JButton("🔄 Re-Seed Sample Data");
-        seedBtn.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        seedBtn.setBackground(new Color(71, 85, 105));
-        seedBtn.setForeground(Color.WHITE);
-        seedBtn.setFocusPainted(false);
+        seedBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        styleButton(seedBtn, new Color(71, 85, 105), Color.WHITE);
         seedBtn.addActionListener(e -> {
             db.seedSampleDataIfEmpty();
             refreshAllData();
@@ -391,9 +386,7 @@ public class MainDashboardFrame extends JFrame {
 
         JButton searchBtn = new JButton("🔍 Find My Seat");
         searchBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        searchBtn.setBackground(new Color(37, 99, 235));
-        searchBtn.setForeground(Color.WHITE);
-        searchBtn.setFocusPainted(false);
+        styleButton(searchBtn, new Color(37, 99, 235), Color.WHITE);
         searchBtn.addActionListener(e -> performSeatSearch());
 
         searchBarCard.add(prompt);
@@ -463,12 +456,13 @@ public class MainDashboardFrame extends JFrame {
         topBar.setOpaque(false);
 
         JButton exportCsvBtn = new JButton("💾 Save Seating Chart (CSV)");
-        exportCsvBtn.setBackground(new Color(16, 185, 129));
-        exportCsvBtn.setForeground(Color.WHITE);
         exportCsvBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        styleButton(exportCsvBtn, new Color(16, 185, 129), Color.WHITE);
         exportCsvBtn.addActionListener(e -> exportSeatingToCsv());
 
         JButton refreshPreviewBtn = new JButton("🔄 Refresh Report Preview");
+        refreshPreviewBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        styleButton(refreshPreviewBtn, new Color(71, 85, 105), Color.WHITE);
         refreshPreviewBtn.addActionListener(e -> generateReportPreview());
 
         topBar.add(exportCsvBtn);
@@ -632,4 +626,48 @@ public class MainDashboardFrame extends JFrame {
         logArea.append(ts + message + "\n");
         logArea.setCaretPosition(logArea.getDocument().getLength());
     }
+
+    public void selectTab(int index) {
+        if (tabbedPane != null && index >= 0 && index < tabbedPane.getTabCount()) {
+            tabbedPane.setSelectedIndex(index);
+        }
+    }
+
+    public void runAllocationQuietly() {
+        List<Room> rooms = db.getAllRooms();
+        List<Student> students = db.getAllStudents();
+        SeatingArrangementEngine.AllocationResult result = engine.allocateSeats(currentExam.getId(), rooms, students);
+        if (result.isSuccess()) {
+            db.saveAllocations(currentExam.getId(), result.getAllocations());
+            log(result.getMessage());
+            refreshAllData();
+        }
+    }
+
+    public void searchRollProgrammatically(String roll) {
+        if (searchRollField != null) {
+            searchRollField.setText(roll);
+            performSeatSearch();
+        }
+    }
+
+    public void selectMatrixRoom(int index) {
+        if (matrixRoomCombo != null && matrixRoomCombo.getItemCount() > index) {
+            matrixRoomCombo.setSelectedIndex(index);
+            updateVisualMatrix();
+        }
+    }
+
+    public static void styleButton(JButton btn, Color bg, Color fg) {
+        btn.setBackground(bg);
+        btn.setForeground(fg);
+        btn.setFocusPainted(false);
+        btn.setOpaque(true);
+        btn.setUI(new javax.swing.plaf.basic.BasicButtonUI());
+        btn.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(bg.darker(), 1, true),
+                new EmptyBorder(8, 14, 8, 14)
+        ));
+    }
 }
+
