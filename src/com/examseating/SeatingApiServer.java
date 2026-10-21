@@ -23,8 +23,11 @@ public class SeatingApiServer {
 
     public static void main(String[] args) throws IOException {
 
-        HttpServer server = HttpServer.create(
-                new InetSocketAddress("127.0.0.1", 8000), 0);
+        int port = Integer.parseInt(
+        System.getenv().getOrDefault("PORT", "8000"));
+
+HttpServer server = HttpServer.create(
+        new InetSocketAddress("0.0.0.0", port), 0);
 
         // Health check
         server.createContext("/health", exchange -> {
