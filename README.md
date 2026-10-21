@@ -172,8 +172,8 @@ java -cp "bin;lib/*" com.examseating.Main
 | **Raghavi M** | [2025503520] | Team Lead & Architecture | SRS, System Architecture, DFD & Use Case Diagrams |
 | **Naina Bawanthade** | [2025503070] | Algorithm & Logic | Interleaving Algorithm, Java Collections, Edge Cases |
 | **Ramya K** | [2025503042] | GUI & Visual Layout | Java Swing Panels, Interactive Hall Matrix Grid |
-| **Sandhiya S** | [2025503304] | Database & Reports | Relational Schema, JDBC DAO, Export Engine, README |
-| **Lavanya A** | [2025503554] | Database & Reports | Relational Schema, JDBC DAO, Export Engine, README |
+| **Sandhiya S** | [202550355] | Database & Reports | Relational Schema, JDBC DAO, Export Engine, README |
+| **Lavanya A** | [2025503304] | Database & Reports | Relational Schema, JDBC DAO, Export Engine, README |
 
 ---
 
