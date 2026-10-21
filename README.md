@@ -9,6 +9,12 @@
 An intelligent, automated desktop application built with **Java (Swing GUI)** and a **Relational Database (JDBC with MySQL / SQLite)** designed to automate conflict-free exam hall seat distribution, enforce anti-cheating student interleaving, render real-time interactive hall matrices, and enable instant student seat lookups.
 
 ---
+🚀 Live Application
+
+👉 Click here to open the Automated Seating Arrangement System
+Link:https://automated-seating-api.onrender.com
+
+---
 
 ## 📌 Table of Contents
 1. [Problem Statement](#-problem-statement)
