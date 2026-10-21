@@ -1,4 +1,4 @@
-# 🎓 Smart Exam Seating Arrangement System
+# 🎓 Automated Seating Arrangement System
 
 [![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
 [![Swing](https://img.shields.io/badge/GUI-Java%20Swing-blue?style=for-the-badge)](https://docs.oracle.com/javase/tutorial/uiswing/)
@@ -31,7 +31,7 @@ Manual examination seating arrangement in universities is:
 * **Prone to human error:** Leading to room overcrowding, seat overlaps, and duplicate seat numbers.
 * **Chaotic on exam mornings:** Heavy congestion around physical notice boards as students search for their halls.
 
-**Solution:** The **Smart Exam Seating Arrangement System** automates this workflow by dynamically interleaving students from differing branches across available halls in seconds, guaranteeing 0% neighbor overlap, and providing an interactive visual room matrix with instant roll-number search.
+**Solution:** The **Automated Seating Arrangement System** automates this workflow by dynamically interleaving students from differing branches across available halls in seconds, guaranteeing 0% neighbor overlap, and providing an interactive visual room matrix with instant roll-number search.
 
 ---
 
@@ -121,7 +121,6 @@ The database consists of 5 normalized relational tables:
   4. **Entity Relationship Diagram (ERD):** Tables and foreign keys.
 
 > **How to Import & View:** Go to [Draw.io](https://app.diagrams.net/) $\rightarrow$ Click **File > Open From > Device** $\rightarrow$ Select `draw_io_diagrams.xml`.
-
 ---
 
 ## 🚀 Installation & How to Run
@@ -170,10 +169,11 @@ java -cp "bin;lib/*" com.examseating.Main
 
 | Name | Roll Number | Role | Key Contributions |
 |---|---|---|---|
-| **Member 1** | [Roll No 1] | Team Lead & Architecture | SRS, System Architecture, DFD & Use Case Diagrams |
-| **Member 2** | [Roll No 2] | Algorithm & Logic | Interleaving Algorithm, Java Collections, Edge Cases |
-| **Member 3** | [Roll No 3] | GUI & Visual Layout | Java Swing Panels, Interactive Hall Matrix Grid |
-| **Member 4** | [Roll No 4] | Database & Reports | Relational Schema, JDBC DAO, Export Engine, README |
+| **Raghavi M** | [2025503520] | Team Lead & Architecture | SRS, System Architecture, DFD & Use Case Diagrams |
+| **Naina Bawanthade** | [2025503070] | Algorithm & Logic | Interleaving Algorithm, Java Collections, Edge Cases |
+| **Ramya K** | [2025503042] | GUI & Visual Layout | Java Swing Panels, Interactive Hall Matrix Grid |
+| **Sandhiya S** | [2025503304] | Database & Reports | Relational Schema, JDBC DAO, Export Engine, README |
+| **Lavanya A** | [2025503554] | Database & Reports | Relational Schema, JDBC DAO, Export Engine, README |
 
 ---
 
