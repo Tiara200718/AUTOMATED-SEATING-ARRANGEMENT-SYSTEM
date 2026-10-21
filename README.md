@@ -12,6 +12,7 @@ An intelligent, automated desktop application built with **Java (Swing GUI)** an
 🚀 Live Application
 
 👉 Click here to open the Automated Seating Arrangement System
+Link:https://automated-seating-arrangement-system-w5hfrcj7swgpvvgh4ndufp.streamlit.app/
 Link:https://automated-seating-api.onrender.com
 
 ---
