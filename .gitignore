@@ -1,0 +1,12 @@
+# Binaries & IDE files
+bin/
+*.class
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# Local DB (optional: user can push schema.sql or sample db)
+*.log
